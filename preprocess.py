@@ -1,6 +1,8 @@
 from extract_archive import extract_specific_dirs
 import os
 import pandas as pd
+from pathlib import Path
+import tarfile
 
 def extract_specific_dirs(
     archive_path, output_dir="./extracted_data", target_dirs=None
@@ -21,49 +23,56 @@ def extract_specific_dirs(
 
     print("Extraction completed!")
 
-if not os.path.exists("./extracted_imdb"):
-    extract_specific_dirs("./aclImdb_v1.tar.gz", output_dir="./extracted_imdb")
-
 def count_files_in_dir(directory):
     total_files = 0
     for root, dirs, files in os.walk(directory):
         total_files += len(files)
     return total_files
 
-print(
-    "Num of positive in test: ",
-    count_files_in_dir("./extracted_imdb/aclImdb/test/pos"),
-)
-print(
-    "Num of negative in test: ",
-    count_files_in_dir("./extracted_imdb/aclImdb/test/neg"),
-)
-print(
-    "Num of positive in train: ",
-    count_files_in_dir("./extracted_imdb/aclImdb/train/pos"),
-)
-print(
-    "Num of negative in train: ",
-    count_files_in_dir("./extracted_imdb/aclImdb/train/neg"),
-)
+def process_imdb_data():
+    if not os.path.exists("./extracted_imdb"):
+        extract_specific_dirs("./aclImdb_v1.tar.gz", output_dir="./extracted_imdb")
 
-# Create empty lists to store data
-texts = []
-labels = []
-splits = []
+    # Print file counts
+    print(
+        "Num of positive in test: ",
+        count_files_in_dir("./extracted_imdb/aclImdb/test/pos"),
+    )
+    print(
+        "Num of negative in test: ",
+        count_files_in_dir("./extracted_imdb/aclImdb/test/neg"),
+    )
+    print(
+        "Num of positive in train: ",
+        count_files_in_dir("./extracted_imdb/aclImdb/train/pos"),
+    )
+    print(
+        "Num of negative in train: ",
+        count_files_in_dir("./extracted_imdb/aclImdb/train/neg"),
+    )
 
-# Iterate through train and test sets
-for split in ["train", "test"]:
-    for sentiment in ["pos", "neg"]:
-        path = f"./extracted_imdb/aclImdb/{split}/{sentiment}"
-        for file in os.listdir(path):
-            with open(os.path.join(path, file), "r", encoding="utf-8") as f:
-                texts.append(f.read())
-                labels.append(1 if sentiment == "pos" else 0)
-                splits.append(split)
+    # Create empty lists to store data
+    texts = []
+    labels = []
+    splits = []
 
-# Create DataFrame
-df = pd.DataFrame({"text": texts, "label": labels, "split": splits})
+    # Iterate through train and test sets
+    for split in ["train", "test"]:
+        for sentiment in ["pos", "neg"]:
+            path = f"./extracted_imdb/aclImdb/{split}/{sentiment}"
+            for file in os.listdir(path):
+                with open(os.path.join(path, file), "r", encoding="utf-8") as f:
+                    texts.append(f.read())
+                    labels.append(1 if sentiment == "pos" else 0)
+                    splits.append(split)
 
-print(f"Total samples in DataFrame: {len(df)}")
-df.to_csv("imdb_reviews.csv", index=False)
+    # Create DataFrame
+    df = pd.DataFrame({"text": texts, "label": labels, "split": splits})
+    print(f"Total samples in DataFrame: {len(df)}")
+    df.to_csv("imdb_reviews.csv", index=False)
+
+if __name__ == "__main__":
+    if not os.path.exists("imdb_reviews.csv"):
+        process_imdb_data()
+    else:
+        print("imdb_reviews.csv already exists. Skipping processing.")
