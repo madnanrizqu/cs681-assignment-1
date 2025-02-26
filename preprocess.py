@@ -33,7 +33,6 @@ def process_imdb_data():
     if not os.path.exists("./extracted_imdb"):
         extract_specific_dirs("./aclImdb_v1.tar.gz", output_dir="./extracted_imdb")
 
-    # Print file counts
     print(
         "Num of positive in test: ",
         count_files_in_dir("./extracted_imdb/aclImdb/test/pos"),
@@ -51,12 +50,10 @@ def process_imdb_data():
         count_files_in_dir("./extracted_imdb/aclImdb/train/neg"),
     )
 
-    # Create empty lists to store data
     texts = []
     labels = []
     splits = []
 
-    # Iterate through train and test sets
     for split in ["train", "test"]:
         for sentiment in ["pos", "neg"]:
             path = f"./extracted_imdb/aclImdb/{split}/{sentiment}"
@@ -66,7 +63,6 @@ def process_imdb_data():
                     labels.append(1 if sentiment == "pos" else 0)
                     splits.append(split)
 
-    # Create DataFrame
     df = pd.DataFrame({"text": texts, "label": labels, "split": splits})
     print(f"Total samples in DataFrame: {len(df)}")
     df.to_csv("imdb_reviews.csv", index=False)
