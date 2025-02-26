@@ -72,3 +72,21 @@ if __name__ == "__main__":
         process_imdb_data()
     else:
         print("imdb_reviews.csv already exists. Skipping processing.")
+        print("""Steps in process_imdb_data:
+1. Extracts positive and negative reviews from train and test directories from the tart file
+    
+2. Count and print files in each directory:
+    - test/pos
+    - test/neg
+    - train/pos
+    - train/neg
+
+3. Process text data:
+    - Reads each review file from all directories
+    - Stores text content, sentiment labels (1 for pos, 0 for neg)
+    - Records split type (train or test)
+
+4. Create DataFrame:
+    - Combines texts, labels, and splits into pandas DataFrame
+    - Saves DataFrame to 'imdb_reviews.csv'    
+""")
