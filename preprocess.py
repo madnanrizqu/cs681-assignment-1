@@ -1,4 +1,3 @@
-from extract_archive import extract_specific_dirs
 import os
 import pandas as pd
 from pathlib import Path
