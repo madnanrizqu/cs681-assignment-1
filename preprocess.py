@@ -52,7 +52,6 @@ def process_imdb_data():
 
     texts = []
     labels = []
-    splits = []
 
     for split in ["train", "test"]:
         for sentiment in ["pos", "neg"]:
@@ -61,32 +60,30 @@ def process_imdb_data():
                 with open(os.path.join(path, file), "r", encoding="utf-8") as f:
                     texts.append(f.read())
                     labels.append(1 if sentiment == "pos" else 0)
-                    splits.append(split)
 
-    df = pd.DataFrame({"text": texts, "label": labels, "split": splits})
+    df = pd.DataFrame({"text": texts, "label": labels })
     print(f"Total samples in DataFrame: {len(df)}")
     df.to_csv("imdb_reviews.csv", index=False)
 
-if __name__ == "__main__":
-    if not os.path.exists("imdb_reviews.csv"):
-        process_imdb_data()
-    else:
-        print("imdb_reviews.csv already exists. Skipping processing.")
-        print("""Steps in process_imdb_data:
+if not os.path.exists("imdb_reviews.csv"):
+    process_imdb_data()
+else:
+    print("imdb_reviews.csv already exists. Skipping processing.")
+    print("""Steps in process_imdb_data:
 1. Extracts positive and negative reviews from train and test directories from the tart file
-    
+
 2. Count and print files in each directory:
-    - test/pos
-    - test/neg
-    - train/pos
-    - train/neg
+- test/pos
+- test/neg
+- train/pos
+- train/neg
 
 3. Process text data:
-    - Reads each review file from all directories
-    - Stores text content, sentiment labels (1 for pos, 0 for neg)
-    - Records split type (train or test)
+- Reads each review file from all directories
+- Stores text content, sentiment labels (1 for pos, 0 for neg)
+- Records split type (train or test)
 
 4. Create DataFrame:
-    - Combines texts, labels, and splits into pandas DataFrame
-    - Saves DataFrame to 'imdb_reviews.csv'    
+- Combines texts, labels, and splits into pandas DataFrame
+- Saves DataFrame to 'imdb_reviews.csv'    
 """)
